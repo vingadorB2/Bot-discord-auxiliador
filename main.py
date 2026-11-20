@@ -5,12 +5,16 @@ import os
 import requests
 from dotenv import load_dotenv
 
+# ------------------------------------------------
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
 bot = commands.Bot(command_prefix='-', intents=intents)
-# ------------------------ready-------------------------------
+
+# ------------------------iniciamento-------------------------------
+
 @bot.event
 async def on_ready():
     print("Bot online")
@@ -21,12 +25,17 @@ async def on_ready():
 
         if canal is not None:
             await canal.send("Bot ligado!")
-# ************************************************************************************
 
-# ------------------------------------command-----------------
 @bot.command()
 async def teste(ctx):
     await ctx.send("ligado, digite '-ajuda' para receber instruções")
+
+# ~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+
+# Comandos:
+
+#----------------------------------- Ajuda:
+
 
 @bot.command()
 async def ajuda(ctx):
@@ -37,11 +46,19 @@ async def ajuda(ctx):
     #  -tempo: {valor1: distancia (em kilometros)}; {valor2: tempo (em horas)}
     #  -ajuda: informações e comandos""")
 
+
+#------------------------------ porcentagem:
+
+
 @bot.command()
 async def porcentagem(ctx, valor1: float, valor2: float):
     print("ativado: porcentagem")
     resultado = (valor1 * valor2) / 100
     await ctx.send(f"{valor1}% de {valor2} é igual a {resultado:.2f}.")
+
+
+# ---------------------------------- Juros:
+
 
 @bot.command()
 async def juros(ctx, valor1: float, valor2: float, valor3: float):
@@ -49,16 +66,31 @@ async def juros(ctx, valor1: float, valor2: float, valor3: float):
     montante = (valor1 * (1 + (valor2 / 100) ** valor3)) + valor2 # juros compostos: M = C * (1 + i)^n
     await ctx.send(f"Com capital {valor1} e taxa {valor2}%, o montante é {montante:.2f}.")
 
+
+# ----------------------------------- area:
+
+
 @bot.command()
 async def area(ctx, valor1: float):
     area = 3.14159 * (valor1 ** 2) # área do círculo: A = π * r²
     await ctx.send(f"A área do círculo com raio {valor1} é {area:.2f}.")
+
+
+# ---------------------------------- tempo:
+
 
 @bot.command()
 async def tempo(ctx, valor1: float, valor2: float):
     # valor1 = velocidade, valor2 = tempo
     tempo = valor1 / valor2
     await ctx.send(f"A velocidade a se percorrer em distancia de {valor1} kilometros com o tempo de {valor2} é de {tempo:.0f}km/h") 
+
+
+# -------------------------------------------------------------------------------------------------------------------------
+
+# -------------------------- ERROR:
+
+    
 @bot.event
 async def on_command_error(ctx, erro):
     if isinstance(erro, commands.CommandNotFound):
