@@ -5,3 +5,16 @@ Olá! Meu nome é Cássio, e este é meu projeto de conclusão de curso de progr
 O bot é simples, ao iniciar em um servidor, ele dará uma mensagem informando que está ligado e passará o primeiro comando: '-ajuda', com isso, você pode ver todas as possibilidades que o bot pode fazer.
 
 O bot terá mais coisas, como analise de imagens, criar imagens de texto, guarda informções, e muito mais.
+
+# ESTRUTURA
+
+## meu projeto:
+bot do discord 
+
+## bibliotecas que vou usar:
+discord
+tensorflow
+Pillow
+numpy
+
+
