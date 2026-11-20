@@ -12,9 +12,9 @@ O bot terá mais coisas, como analise de imagens, criar imagens de texto, guarda
 bot do discord 
 
 ## bibliotecas que vou usar:
-discord
-tensorflow
-Pillow
+discord,
+tensorflow,
+Pillow,
 numpy
 
 
