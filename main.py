@@ -14,10 +14,10 @@ bot = commands.Bot(command_prefix='-', intents=intents)
 
 
 def local_resposta(ctx, mensagem):
-    return mensagem.author == ctx.author and mensagem.channel == ctx.channel
+    return mensagem.author == ctx.author and mensagem.channel == ctx.channel # conferir se o usuario está no mesmo chat
 
 
-async def controle_tempo(ctx, opcoes):
+async def controle_tempo(ctx, opcoes): # controle do tempo e da opçção sair ou comando inválido
     opcoes = {opcao.lower() for opcao in opcoes}
 
     while True:
@@ -28,7 +28,7 @@ async def controle_tempo(ctx, opcoes):
             await ctx.send("Tempo esgotado")
             return
 
-        resposta_verificacao = cronometro.content.strip().lower()
+        resposta_verificacao = cronometro.content.strip().lower() # resposta usuario
 
         if resposta_verificacao == "sair":
             await ctx.send("Comando cancelado")
@@ -82,7 +82,8 @@ async def juros(ctx):
     await asyncio.sleep(1)
     await ctx.send(f"deseja juros simples ou composto? para isso, digite 'simples' ou 'composto'")
 
-    resposta = await controle_tempo(ctx, ("simples", "composto"))
+    resposta = await controle_tempo(ctx, ("simples", "composto")) #chama a função
+
     if resposta is None:
         return
     resposta_verificacao = resposta.content.strip().lower()
@@ -96,6 +97,7 @@ async def juros(ctx):
         await ctx.send("Digite o tempo desejado (de preferência, anos):")
         tempo = await bot.wait_for("message", timeout=12, check=partial(local_resposta,ctx))
 
+# transforma resposta em numeros
         capital_num = float(capital.content)
         taxa_num = float(taxa.content)
         tempo_num = float(tempo.content)
@@ -115,6 +117,7 @@ async def juros(ctx):
         await ctx.send("Digite o tempo desejado (de preferência, anos):")
         tempo = await bot.wait_for("message", timeout=12, check=partial(local_resposta,ctx))
 
+# transforma a resposta em numeros
         capital_num = float(capital.content)
         taxa_num = float(taxa.content)
         tempo_num = float(tempo.content)
@@ -133,7 +136,7 @@ async def porcentagem(ctx):
     await ctx.send(f"""Deseja descobrir o valor de uma porcentagem de um valor [porcentagem], ou quanto de um valor cobre de um total [valor]?: """)
 
 
-    resposta = await controle_tempo(ctx, ("valor", "porcentagem"))
+    resposta = await controle_tempo(ctx, ("valor", "porcentagem")) # chamar função
     if resposta is None:
         return
     resposta_verificacao = resposta.content.strip().lower()
@@ -182,7 +185,7 @@ async def areas(ctx):
     (OBS: O calculo é a base de figuras em 2 dimenção [2D])""")
 
 
-    resposta = await controle_tempo(ctx, ("quadrado", "circulo", "triangulo", "triângulo"))
+    resposta = await controle_tempo(ctx, ("quadrado", "circulo", "triangulo", "triângulo")) # chamar função
     if resposta is None:
         return
     resposta_verificacao = resposta.content.strip().lower()
@@ -216,17 +219,17 @@ async def areas(ctx):
         altura = await bot.wait_for("message", timeout=12, check=partial(local_resposta,ctx))
 
         valor = float(base.content) * float(altura.content) / 2
-        
+
         await ctx.send(f"A área de um triângulo de base {base.content} e altura {altura.content} é de {valor}")
 
 
 # --------------------------------- tempo:
 
-@bot.command()
-async def tempo(ctx, valor1: float, valor2: float):
-    # valor1 = velocidade, valor2 = tempo
-    tempo = valor1 / valor2
-    await ctx.send(f"A velocidade a se percorrer em distancia de {valor1} kilometros com o tempo de {valor2} é de {tempo:.0f}km/h") 
+# @bot.command()
+# async def tempo(ctx, valor1: float, valor2: float):
+#     # valor1 = velocidade, valor2 = tempo
+#     tempo = valor1 / valor2
+#     await ctx.send(f"A velocidade a se percorrer em distancia de {valor1} kilometros com o tempo de {valor2} é de {tempo:.0f}km/h") 
 
 
 # -------------------------------------------------------------------------------------------------------------------------
