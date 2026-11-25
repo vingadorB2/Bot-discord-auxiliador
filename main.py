@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
-
+import asyncio
+from dotenv import load_dotenv
+import os
 
 # ------------------------------------------------
 
@@ -14,7 +16,7 @@ bot = commands.Bot(command_prefix='-', intents=intents)
 
 @bot.event
 async def on_ready():
-    print("Bot online")
+    print("Bot online, digite '-ajuda para receber instruções")
     print("Comandos carregados:", [c.name for c in bot.commands])
 
     for servidor in bot.guilds:
@@ -33,7 +35,6 @@ async def teste(ctx):
 
 #----------------------------------- Ajuda:
 
-
 @bot.command()
 async def ajuda(ctx):
     await ctx.send("""Comandos: \n
@@ -44,37 +45,185 @@ async def ajuda(ctx):
     #  -ajuda: informações e comandos""")
 
 
-#------------------------------ porcentagem:
-
-
-@bot.command()
-async def porcentagem(ctx, valor1: float, valor2: float):
-    print("ativado: porcentagem")
-    resultado = (valor1 * valor2) / 100
-    await ctx.send(f"{valor1}% de {valor2} é igual a {resultado:.2f}.")
-
-
-# ---------------------------------- Juros:
-
+#----------------------------------------- Juros:
 
 @bot.command()
-async def juros(ctx, valor1: float, valor2: float, valor3: float):
+async def juros(ctx):
     print("ativado: juros")
-    montante = (valor1 * (1 + (valor2 / 100) ** valor3)) + valor2 # juros compostos: M = C * (1 + i)^n
-    await ctx.send(f"Com capital {valor1} e taxa {valor2}%, o montante é {montante:.2f}.")
+    await asyncio.sleep(1)
+    await ctx.send(f"deseja juros simples ou composto? para isso, digite [simples/ composto]")
+
+
+    def local_resposta(mensagem):
+        return mensagem.author == ctx.author and mensagem.channel == ctx.channel
+
+    while True:
+        try:
+            cronometro = await bot.wait_for("message", timeout=30, check=local_resposta)
+        except TimeoutError:
+            await ctx.send("Tempo esgotado")
+            return
+
+        resposta_verificacao = cronometro.content.strip().lower()
+
+        if resposta_verificacao == "sair":
+            await ctx.send("Comando cancelado")
+            return
+
+        if resposta_verificacao in ("simples", "composto"):
+            break
+
+        await ctx.send('Resposta inválida. Digite "simples" para calcular juros simples, "composto" para juros composto ou "sair" para cancelar.')
+
+    if resposta_verificacao == "simples":
+        await ctx.send("Digite o valor do capital inicial:")
+        capital = await bot.wait_for("message", timeout=12, check=local_resposta)
+        await ctx.send("Digite o valor dos juros (em inteiro, ex: 10% = 10; 1% = 1):")
+        taxa = await bot.wait_for("message", timeout=12, check=local_resposta)
+        await ctx.send("Digite o tempo desejado (de preferência, anos):")
+        tempo = await bot.wait_for("message", timeout=12, check=local_resposta)
+
+        capital_num = float(capital.content)
+        taxa_num = float(taxa.content)
+        tempo_num = float(tempo.content)
+
+        decimal = taxa_num / 100
+        valor = capital_num * (1 + decimal * tempo_num)
+
+        await ctx.send(f'O valor final é {float(valor):.2f}')
+    elif resposta_verificacao == 'composto':
+        await ctx.send("Digite o valor do capital inicial:")
+        capital = await bot.wait_for("message", timeout=12, check=local_resposta)
+        await ctx.send("Digite o valor dos juros (em inteiro, ex: 10% = 10; 1% = 1):")
+        taxa = await bot.wait_for("message", timeout=12, check=local_resposta)
+        await ctx.send("Digite o tempo desejado (de preferência, anos):")
+        tempo = await bot.wait_for("message", timeout=12, check=local_resposta)
+
+        capital_num = float(capital.content)
+        taxa_num = float(taxa.content)
+        tempo_num = float(tempo.content)
+
+        decimal = taxa_num / 100
+        valor = capital_num * (1 + decimal)**tempo_num
+
+        await ctx.send(f'O valor final é {float(valor):.2f}')
+
+# ---------------------------------- Porcentagem:
+
+@bot.command()
+async def porcentagem(ctx):
+    print("Ativado: porcentagem")
+    await asyncio.sleep(1)
+    await ctx.send(f"""Deseja descobrir o valor de uma porcentagem de um valor [porcentagem], 
+                    ou quanto de um valor cobre de um total [valor]?: """)
+
+    def local_resposta(mensagem):
+        return mensagem.author == ctx.author and mensagem.channel == ctx.channel
+
+    while True:
+        try:
+            cronometro = await bot.wait_for("message", timeout=30, check=local_resposta)
+        except TimeoutError:
+            await ctx.send("Tempo esgotado")
+            return
+
+        resposta_verificacao = cronometro.content.strip().lower()
+
+        if resposta_verificacao == "sair":
+            await ctx.send("Comando cancelado")
+            return
+
+        if resposta_verificacao in ("valor", "porcentagem"):
+            break
+
+        await ctx.send('''Resposta inválida. Digite "valor" para descobrir o percentual de uma parte, 
+                        "porcentagem" para descobrir o valor de uma porcentagem de um total, ou "sair" para cancelar''')
+
+    if resposta_verificacao == 'valor':
+        await ctx.send("Digite a parte do total:")
+        valor1 = await bot.wait_for("message", timeout=12, check=local_resposta)
+        await ctx.send("Digite o valor total:")
+        valor2 = await bot.wait_for("message",timeout=12, check=local_resposta)
+
+        divisao = float(valor1.content) / float(valor2.content)
+        total = divisao * 100
+
+        await ctx.send(f"A porcentagem da parte {valor1} em relação ao total de {valor2} é de {total:.2f}.")
+
+    elif resposta_verificacao == 'porcentagem':
+        await ctx.send("Digite o valor total:")
+        valor = await bot.wait_for("message", timeout=12, check=local_resposta)
+        await ctx.send("Digite a porcentagem que será aplicada (em inteiro: 10% = 10; 1% = 1)")
+        porcentagem = await bot.wait_for("message", timeout=12, check=local_resposta)
+
+        decimal = float(porcentagem.content) / 100
+        final = decimal * valor
+
+        await ctx.send(f"{porcentagem}% de {valor} é igual a {final:0.2f}")
+
+    
 
 
 # ----------------------------------- area:
 
-
 @bot.command()
-async def area(ctx, valor1: float):
-    area = 3.14159 * (valor1 ** 2) # área do círculo: A = π * r²
-    await ctx.send(f"A área do círculo com raio {valor1} é {area:.2f}.")
+async def areas(ctx):
+    print('Ativado: Areas')
+    await asyncio.sleep(1)
+    await ctx.send("""Opções de áreas:\n
+                    - Quadrado
+                    - Retangulo
+                    - triangulo
+                    - cilindro
+                    - Trapézio
+                    - Circulo
+                    
+                    (OBS: O calculo é a base de figuras em 2 dimenção [2D])""")
+
+    def local_resposta(mensagem):
+        return mensagem.author == ctx.author and mensagem.channel == ctx.channel
+    
+    while True:
+        try:
+            cronometro = await bot.wait_for("message", timeout=30, check=local_resposta)
+        except TimeoutError:
+            await ctx.send("Tempo esgotado")
+            return
+
+        resposta_verificacao = cronometro.content.strip().lower()
+
+        if resposta_verificacao == "sair":
+            await ctx.send("Comando cancelado")
+            return
+
+        if resposta_verificacao in ("quadrado", "cilindro", "circulo", "triangulo", "retangulo", "trapézio"):
+            break
+
+        await ctx.send('''Resposta inválida. Digite uma das opções mencionadas anteriormente ou digite "sair" para cancelar''')
+
+    if resposta_verificacao == "circulo":
+        await ctx.send('Digite o raio do circulo:')
+        raio = await bot.wait_for("message", timeout=12, check=local_resposta)
+        valor = 3.1415 * float(raio.content)**2
+        await ctx.send(f"A área de um circulo com raio {raio} é {valor}")
+
+    elif resposta_verificacao == 'quadrado':
+        await ctx.send('Digite o lado do quadrado:')
+        lado = await bot.wait_for("message",timeout=12,check=local_resposta)
+        valor = float(lado.content)**2
+        await ctx.send(f"A área de um quadrado com o lado valendo  {lado} é de {valor}")
+
+    elif resposta_verificacao == 'triângulo' or resposta_verificacao == 'triangulo':
+        await ctx.send('Digite a base do triângulo:')
+        base = await bot.wait_for("message",timeout=12,check=local_resposta)
+        await ctx.send('Digite a altura do triângulo:')
+        altura = await bot.wait_for("message",timeout=12,check=local_resposta)
+
+        valor = float(base.content) * float(altura.content) / 2
+        await ctx.send(f"A área de um triângulo de base {base} e altura {altura} é de{valor}")
 
 
-# ---------------------------------- tempo:
-
+# --------------------------------- tempo:
 
 @bot.command()
 async def tempo(ctx, valor1: float, valor2: float):
@@ -86,7 +235,6 @@ async def tempo(ctx, valor1: float, valor2: float):
 # -------------------------------------------------------------------------------------------------------------------------
 
 # -------------------------- ERROR:
-
     
 @bot.event
 async def on_command_error(ctx, erro):
@@ -104,4 +252,5 @@ async def on_command_error(ctx, erro):
         print(erro)
 
 
-bot.run("TOKEN")
+load_dotenv()
+bot.run(os.getenv("DISCORD_TOKEN"))
