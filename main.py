@@ -86,7 +86,7 @@ async def juros(ctx):
         capital_num = float(capital.content)
         taxa_num = float(taxa.content)
         tempo_num = float(tempo.content)
-
+ 
         decimal = taxa_num / 100
         valor = capital_num * (1 + decimal * tempo_num)
 
