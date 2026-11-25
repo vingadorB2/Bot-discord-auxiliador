@@ -23,7 +23,7 @@ async def on_ready():
         canal = servidor.system_channel
 
         if canal is not None:
-            await canal.send("Bot ligado!")
+            await canal.send("Bot ligado!, digite '-ajuda' para informações")
 
 @bot.command()
 async def teste(ctx):
@@ -167,12 +167,12 @@ async def areas(ctx):
     print('Ativado: Areas')
     await asyncio.sleep(1)
     await ctx.send("""Opções de áreas:\n
-                    - Quadrado
-            - Retangulo
-        - triangulo
-    - cilindro
-- Trapézio
-- Circulo
+# Quadrado
+# Retangulo
+# triângulo
+# cilindro
+# Trapézio
+# Circulo
                     
     (OBS: O calculo é a base de figuras em 2 dimenção [2D])""")
 
